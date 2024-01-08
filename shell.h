@@ -34,10 +34,10 @@ extern char **environ;
 
 
 /**
- * struct liststring - singly linked list
- * @n: the number field
- * @s: a string
- * @next: points to the next node
+ * struct liststring -  node in a singly linked list for storing string data.
+ * @n: The num field.
+ * @s: A string.
+ * @next: Points to the next node in the list.
  */
 typedef struct liststring
 {
@@ -47,26 +47,27 @@ typedef struct liststring
 } ls_t;
 
 /**
- *struct passinf - contains pseudo-args to pass into a function,
- *			allowing uniform prototype for function pointer struct
- *@arg: a string generated from getline containing arguements
- *@argv: an array of strings generated from arg
- *@path: a string path for the current command
- *@argc: the argument count
- *@line_counter: the error count
- *@error_number: the error code for exit()s
- *@linecounter_flag: if on count this line of input
- *@filename: the program filename
- *@env: linked list local copy of environ
- *@environ: custom modified copy of environ from LL env
- *@hist: the history node
- *@alias: the alias node
- *@env_changed: on if environ was changed
- *@status: the return status of the last exec'd command
- *@cmd_buffer: address of pointer to cmd_buf, on if chaining
- *@cmd_buffer_type: CMD_type ||, &&, ;
- *@readfd: the fd from which to read line input
- *@histcount: the history line number count
+ * struct passinf - serves as a container for pseudo-arguments to maintain
+ *		a consistent prototype for function pointers in a struct
+ * @arg: A string generated from `getline` containing arguments.
+ * @argv: An array of strings generated from `arg`.
+ * @path: A string path for the current command.
+ * @argc: The argument count.
+ * @line_counter: The error count.
+ * @error_number: The error code for `exit()` calls.
+ * @linecounter_flag: If on, count this line of input.
+ * @filename: The program filename.
+ * @env: Linked list local copy of `environ`.
+ * @environ: Custom modified copy of `environ` from the linked list `env`.
+ * @hist: The history node.
+ * @alias: The alias node.
+ * @env_changed: On if `environ` was changed.
+ * @status: The return status of the last executed command.
+ * @cmd_buffer: Address of the pointer to `cmd_buf`; on if chaining.
+ * @cmd_buffer_type: `CMD_type` (logical operators such as ||, &&, ;)
+ *			used in command chaining.
+ * @readfd: The file descriptor from which to read line input.
+ * @histcount: The history line number count.
  */
 typedef struct passinf
 {
@@ -96,15 +97,18 @@ typedef struct passinf
 	0, 0, 0}
 
 /**
- *struct built_in - contains a builtin string and related function
- *@tp: the builtin command flag
- *@f: the function
+ *struct built_in - a built-in command along with its associated function.
+ *@tp: for the built-in command flag.
+ *@f: for the related function.
  */
 typedef struct built_in
 {
 	char *tp;
 	int (*f)(inf_t *);
 } built_in_t;
+
+
+int loophsh(char **);
 
 /* functions_1.c */
 int hsh(inf_t *, char **);
@@ -116,13 +120,6 @@ void fork_cmd(inf_t *);
 int is_cmd(inf_t *, char *);
 char *dup_chars(char *, int, int);
 char *find_path(inf_t *, char *, char *);
-int loophsh(char **);
-
-/* functions_9.c */
-void _eputs(char *);
-int _eputchar(char);
-int _putfd(char c, int fd);
-int _putsfd(char *str, int fd);
 
 /* functions_3.c */
 int _strlen(char *);
@@ -162,6 +159,31 @@ int print_d(int, int);
 char *convert_number(long int, int, int);
 void remove_comments(char *);
 
+/* functions_9.c */
+void _eputs(char *);
+int _eputchar(char);
+int _putfd(char c, int fd);
+int _putsfd(char *str, int fd);
+
+/* functions_10.c */
+ls_t *add_node(ls_t **, const char *, int);
+ls_t *add_node_end(ls_t **, const char *, int);
+size_t print_list_str(const ls_t *);
+int delete_node_at_index(ls_t **, unsigned int);
+void free_list(ls_t **);
+
+/* functions_11.c */
+size_t list_len(const ls_t *);
+char **list_to_strings(ls_t *);
+size_t print_list(const ls_t *);
+ls_t *node_starts_with(ls_t *, char *, char);
+ssize_t get_node_index(ls_t *, ls_t *);
+
+/* functions_12.c */
+void clear_info(inf_t *);
+void set_info(inf_t *, char **);
+void free_info(inf_t *, int);
+
 /* functions_13.c */
 int _myexit(inf_t *);
 int _mycd(inf_t *);
@@ -174,17 +196,12 @@ int set_alias(inf_t *, char *);
 int print_alias(ls_t *node);
 int _myalias(inf_t *);
 
-/* functions_19.c */
-ssize_t input_buf(inf_t *, char **, size_t *);
-ssize_t get_input(inf_t *);
-ssize_t read_buf(inf_t *, char *, size_t *);
-int _getline(inf_t *, char **, size_t *);
-void sigintHandler(int);
-
-/* functions_12.c */
-void clear_info(inf_t *);
-void set_info(inf_t *, char **);
-void free_info(inf_t *, int);
+/* functions_15.c */
+int is_chain(inf_t *, char *, size_t *);
+void check_chain(inf_t *, char *, size_t *, size_t, size_t);
+int replace_alias(inf_t *);
+int replace_vars(inf_t *);
+int replace_string(char **, char *);
 
 /* functions_16.c */
 char *_getenv(inf_t *, const char *);
@@ -205,25 +222,11 @@ int read_history(inf_t *inform);
 int build_history_list(inf_t *inform, char *buf, int linecount);
 int renumber_history(inf_t *inform);
 
-/* functions_10.c */
-ls_t *add_node(ls_t **, const char *, int);
-ls_t *add_node_end(ls_t **, const char *, int);
-size_t print_list_str(const ls_t *);
-int delete_node_at_index(ls_t **, unsigned int);
-void free_list(ls_t **);
-
-/* functions_11.c */
-size_t list_len(const ls_t *);
-char **list_to_strings(ls_t *);
-size_t print_list(const ls_t *);
-ls_t *node_starts_with(ls_t *, char *, char);
-ssize_t get_node_index(ls_t *, ls_t *);
-
-/* functions_15.c */
-int is_chain(inf_t *, char *, size_t *);
-void check_chain(inf_t *, char *, size_t *, size_t, size_t);
-int replace_alias(inf_t *);
-int replace_vars(inf_t *);
-int replace_string(char **, char *);
+/* functions_19.c */
+ssize_t input_buf(inf_t *, char **, size_t *);
+ssize_t get_input(inf_t *);
+ssize_t read_buf(inf_t *, char *, size_t *);
+int _getline(inf_t *, char **, size_t *);
+void sigintHandler(int);
 
 #endif
