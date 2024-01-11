@@ -89,7 +89,7 @@ char **strtow(char *str, char *d)
 		return (NULL);
 	if (!d)
 		d = " ";
-	for (i = 0; str[x] != '\0'; x++)
+	for (x = 0; str[x] != '\0'; x++)
 		if (!is_delim(str[x], d) && (is_delim(str[x + 1], d) || !str[x + 1]))
 			numwords++;
 
